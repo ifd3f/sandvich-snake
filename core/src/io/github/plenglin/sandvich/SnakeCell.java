@@ -1,34 +1,43 @@
 package io.github.plenglin.sandvich;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Iterator;
 
 /**
  * A single cell that a snake takes up. It has followers. Woo, recursion!
  */
-public class SnakeCell implements Iterable<SnakeCell>, GridObject {
+public class SnakeCell implements Iterable<SnakeCell> {
 
-    private IntVector position;
+    private IntVector position, lastMovement;
     private SnakeCell follower;
 
     public SnakeCell(IntVector position, SnakeCell follower) {
         this.position = position;
+        this.lastMovement = new IntVector(0, 0);
         this.follower = follower;
     }
 
     /**
      * Move the snake.
      * @param movement How to move it
+     * @param doAdd Add a cell to the end?
      */
-    public void move(IntVector movement) {
-        if (follower != null) {
-            follower.move(position.sub(movement));
+    public void move(IntVector movement, boolean doAdd) {
+        if (!isTail()) {
+            follower.move(lastMovement, doAdd);
+        } else if (doAdd) {
+            follower = new SnakeCell(position, null);
         }
         position = position.add(movement);
+        lastMovement = movement;
     }
 
     public boolean isEatingSelf() {
+        if (isTail()) {
+            return false;
+        }
         for (SnakeCell follower: this) {
             if (this.position.equals(follower.position)) {
                 return true;
@@ -53,6 +62,14 @@ public class SnakeCell implements Iterable<SnakeCell>, GridObject {
         return follower;
     }
 
+    public void draw(SpriteBatch batch, int cellWidth, int cellHeight) {
+        Texture t = getTexture();
+        batch.draw(t, cellWidth*position.x, cellHeight*position.y, cellWidth, cellHeight, 0, 0, t.getWidth(), t.getHeight(), false, true);
+        if (!isTail()) {
+            follower.draw(batch, cellWidth, cellHeight);
+        }
+    }
+
     /**
      * @return an iterator of all SnakeCell instances trailing it
      */
@@ -63,7 +80,7 @@ public class SnakeCell implements Iterable<SnakeCell>, GridObject {
 
             @Override
             public boolean hasNext() {
-                return current.isTail();
+                return current != null && !current.isTail();
             }
 
             @Override
@@ -74,8 +91,12 @@ public class SnakeCell implements Iterable<SnakeCell>, GridObject {
         };
     }
 
-    @Override
-    public Texture getTexture() {
-        return null;
+    public boolean occupiesPosition(IntVector query) {
+        return position.equals(query) || (!isTail() && follower.occupiesPosition(query));
     }
+
+    public Texture getTexture() {
+        return Main.assets.get(Assets.heavy_fwd_open);
+    }
+
 }

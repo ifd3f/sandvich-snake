@@ -41,4 +41,8 @@ public class IntVector {
         return new Vector2(x, y);
     }
 
+    @Override
+    public String toString() {
+        return "IntVector<" + x + ", " + y + ">";
+    }
 }
