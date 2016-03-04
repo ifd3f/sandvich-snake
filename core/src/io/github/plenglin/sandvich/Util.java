@@ -6,7 +6,7 @@ package io.github.plenglin.sandvich;
 public class Util {
 
     public static int randint(int min, int max) {
-        return (int) ((max-min)*Math.random() + min);
+        return (int) ((max - min) * Math.random() + min);
     }
 
 }

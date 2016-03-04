@@ -1,30 +1,13 @@
 package io.github.plenglin.sandvich;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Main extends Game {
 
     public static AssetManager assets;
 
-	@Override
-	public void create () {
-        assets = new AssetManager();
-        loadAssets();
-        setScreen(new GameScreen());
-	}
-
-	@Override
-	public void render () {
-        super.render();
-	}
-
-    public void loadAssets() {
+    public static void loadAssets() {
         assets.load(Assets.cake);
         assets.load(Assets.cash);
         assets.load(Assets.chocolate);
@@ -44,11 +27,28 @@ public class Main extends Game {
         assets.load(Assets.heavy_right_open);
         assets.load(Assets.heavy_right_closed);
 
+        assets.load(Assets.title_font);
+        assets.load(Assets.header_font);
+        assets.load(Assets.normal_font);
+
         assets.finishLoading();
     }
 
     @Override
+    public void create() {
+        assets = new AssetManager();
+        loadAssets();
+        setScreen(new GameScreen());
+    }
+
+    @Override
+    public void render() {
+        super.render();
+    }
+
+    @Override
     public void dispose() {
+        super.dispose();
         assets.dispose();
     }
 

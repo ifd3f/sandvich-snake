@@ -59,7 +59,7 @@ public class GameScreen implements Screen, InputProcessor {
                 Gdx.app.exit();
             }
             Food toRemove = null;
-            for (Food f: food) {
+            for (Food f : food) {
                 if (snake.getPosition().equals((f.getPosition()))) {
                     toRemove = f;
                     lengthToGrow += Constants.FOOD_GROW_LENGTH;
@@ -79,11 +79,15 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(gridCamera.combined);
         batch.begin();
-        for (Food f: food) {
+        for (Food f : food) {
             f.draw(batch, Constants.CELL_WIDTH, Constants.CELL_HEIGHT);
         }
         snake.draw(batch, Constants.CELL_WIDTH, Constants.CELL_HEIGHT);
         batch.end();
+    }
+
+    public void update(float delta) {
+
     }
 
     public IntVector findNewFoodLocation() {
@@ -126,22 +130,26 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
-            case Input.Keys.W:case Input.Keys.UP:
+            case Input.Keys.W:
+            case Input.Keys.UP:
                 if (direction != SnakeDirection.DOWN) {
                     nextDirection = SnakeDirection.UP;
                 }
                 break;
-            case Input.Keys.S:case Input.Keys.DOWN:
+            case Input.Keys.S:
+            case Input.Keys.DOWN:
                 if (direction != SnakeDirection.UP) {
                     nextDirection = SnakeDirection.DOWN;
                 }
                 break;
-            case Input.Keys.A:case Input.Keys.LEFT:
+            case Input.Keys.A:
+            case Input.Keys.LEFT:
                 if (direction != SnakeDirection.RIGHT) {
                     nextDirection = SnakeDirection.LEFT;
                 }
                 break;
-            case Input.Keys.D:case Input.Keys.RIGHT:
+            case Input.Keys.D:
+            case Input.Keys.RIGHT:
                 if (direction != SnakeDirection.LEFT) {
                     nextDirection = SnakeDirection.RIGHT;
                 }

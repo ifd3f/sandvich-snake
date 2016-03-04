@@ -21,8 +21,9 @@ public class SnakeCell implements Iterable<SnakeCell> {
 
     /**
      * Move the snake.
+     *
      * @param movement How to move it
-     * @param doAdd Add a cell to the end?
+     * @param doAdd    Add a cell to the end?
      */
     public void move(IntVector movement, boolean doAdd) {
         if (!isTail()) {
@@ -38,7 +39,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
         if (isTail()) {
             return false;
         }
-        for (SnakeCell follower: this) {
+        for (SnakeCell follower : this) {
             if (this.position.equals(follower.position)) {
                 return true;
             }
@@ -64,7 +65,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
 
     public void draw(SpriteBatch batch, int cellWidth, int cellHeight) {
         Texture t = getTexture();
-        batch.draw(t, cellWidth*position.x, cellHeight*position.y, cellWidth, cellHeight, 0, 0, t.getWidth(), t.getHeight(), false, true);
+        batch.draw(t, cellWidth * position.x, cellHeight * position.y, cellWidth, cellHeight, 0, 0, t.getWidth(), t.getHeight(), false, true);
         if (!isTail()) {
             follower.draw(batch, cellWidth, cellHeight);
         }

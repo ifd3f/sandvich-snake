@@ -18,7 +18,7 @@ public abstract class Food {
 
     public void draw(SpriteBatch batch, int cellWidth, int cellHeight) {
         Texture t = getTexture();
-        batch.draw(t, cellWidth*position.x, cellHeight*position.y, cellWidth, cellHeight, 0, 0, t.getWidth(), t.getHeight(), false, true);
+        batch.draw(t, cellWidth * position.x, cellHeight * position.y, cellWidth, cellHeight, 0, 0, t.getWidth(), t.getHeight(), false, true);
     }
 
     public abstract Texture getTexture();
