@@ -2,6 +2,7 @@ package io.github.plenglin.sandvich.food;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.plenglin.sandvich.Constants;
 import io.github.plenglin.sandvich.IntVector;
 
 public abstract class Food {
@@ -16,9 +17,16 @@ public abstract class Food {
         return position;
     }
 
-    public void draw(SpriteBatch batch, int cellWidth, int cellHeight) {
+    public void draw(SpriteBatch batch) {
         Texture t = getTexture();
-        batch.draw(t, cellWidth * position.x, cellHeight * position.y, cellWidth, cellHeight, 0, 0, t.getWidth(), t.getHeight(), false, true);
+        batch.draw(
+                t,
+                Constants.CELL_WIDTH * position.x + Constants.GRID_OFFSET_X,
+                Constants.CELL_HEIGHT * position.y + Constants.GRID_OFFSET_Y,
+                Constants.CELL_WIDTH, Constants.CELL_HEIGHT,
+                0, 0, t.getWidth(), t.getHeight(),
+                false, true
+        );
     }
 
     public abstract Texture getTexture();

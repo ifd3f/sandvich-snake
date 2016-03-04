@@ -1,5 +1,6 @@
 package io.github.plenglin.sandvich;
 
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -10,29 +11,33 @@ import java.util.Iterator;
  */
 public class SnakeCell implements Iterable<SnakeCell> {
 
-    private IntVector position, lastMovement;
-    private SnakeCell follower;
+    private IntVector position;
+    private SnakeDirection direction;
+    private SnakeCell follower, following;
+    boolean mouthOpen = false; // nice display thing
 
-    public SnakeCell(IntVector position, SnakeCell follower) {
+    public SnakeCell(IntVector position, SnakeCell follower, SnakeCell following, SnakeDirection direction) {
         this.position = position;
-        this.lastMovement = new IntVector(0, 0);
+        this.direction = direction;
         this.follower = follower;
+        this.following = following;
     }
 
     /**
      * Move the snake.
      *
-     * @param movement How to move it
+     * @param direction How to move it
      * @param doAdd    Add a cell to the end?
      */
-    public void move(IntVector movement, boolean doAdd) {
+    public void move(SnakeDirection direction, boolean doAdd) {
         if (!isTail()) {
-            follower.move(lastMovement, doAdd);
+            follower.move(this.direction, doAdd);
         } else if (doAdd) {
-            follower = new SnakeCell(position, null);
+            follower = new SnakeCell(position, null, this, this.direction);
         }
-        position = position.add(movement);
-        lastMovement = movement;
+        position = position.add(direction.vec);
+        this.direction = direction;
+        mouthOpen = !mouthOpen;
     }
 
     public boolean isEatingSelf() {
@@ -63,11 +68,30 @@ public class SnakeCell implements Iterable<SnakeCell> {
         return follower;
     }
 
-    public void draw(SpriteBatch batch, int cellWidth, int cellHeight) {
+    public boolean isHead() {
+        return following == null;
+    }
+
+    public SnakeCell getHead() {
+        return isHead() ? this : follower.getHead();
+    }
+
+    public SnakeCell getFollowing() {
+        return following;
+    }
+
+    public void draw(SpriteBatch batch) {
         Texture t = getTexture();
-        batch.draw(t, cellWidth * position.x, cellHeight * position.y, cellWidth, cellHeight, 0, 0, t.getWidth(), t.getHeight(), false, true);
+        batch.draw(
+                t,
+                Constants.CELL_WIDTH * position.x + Constants.GRID_OFFSET_X,
+                Constants.CELL_HEIGHT * position.y + Constants.GRID_OFFSET_Y,
+                Constants.CELL_WIDTH, Constants.CELL_HEIGHT,
+                0, 0, t.getWidth(), t.getHeight(),
+                false, true
+        );
         if (!isTail()) {
-            follower.draw(batch, cellWidth, cellHeight);
+            follower.draw(batch);
         }
     }
 
@@ -97,7 +121,35 @@ public class SnakeCell implements Iterable<SnakeCell> {
     }
 
     public Texture getTexture() {
-        return Main.assets.get(Assets.heavy_fwd_open);
+        if (isHead()){
+            return Main.assets.get(mouthOpen ? direction.open : direction.closed);
+        }
+        if (isTail()) {
+            return Main.assets.get(SnakeDirection.toDirection(following.position.sub(position)).tail);
+        }
+        IntVector a = following.position;
+        IntVector b = follower.position;
+        Pixmap pixmap = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Constants.HEAVY_SKIN);
+        for (IntVector v: new IntVector[] {a, b}) {
+            switch (SnakeDirection.toDirection(position.sub(v))) {
+                case DOWN:
+                    pixmap.fillRectangle(Constants.NECK_OFFSET, 0, Constants.HEAVY_NECK, Constants.NECK_LONG_LENGTH);
+                    break;
+                case UP:
+                    pixmap.fillRectangle(Constants.NECK_OFFSET, Constants.NECK_OFFSET, Constants.HEAVY_NECK, Constants.NECK_LONG_LENGTH);
+                    break;
+                case RIGHT:
+                    pixmap.fillRectangle(0, Constants.NECK_OFFSET, Constants.NECK_LONG_LENGTH, Constants.HEAVY_NECK);
+                    break;
+                case LEFT:
+                    pixmap.fillRectangle(Constants.NECK_OFFSET, Constants.NECK_OFFSET, Constants.NECK_LONG_LENGTH, Constants.HEAVY_NECK);
+                    break;
+            }
+        }
+        Texture t = new Texture(pixmap);
+        pixmap.dispose();
+        return t;
     }
 
 }

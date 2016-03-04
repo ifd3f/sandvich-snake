@@ -25,6 +25,11 @@ public class Assets {
     public static final AssetDescriptor<Texture> heavy_fwd_closed = new AssetDescriptor<Texture>("assets/textures/heavy_fwd_closed.png", Texture.class);
     public static final AssetDescriptor<Texture> heavy_back = new AssetDescriptor<Texture>("assets/textures/heavy_back.png", Texture.class);
 
+    public static final AssetDescriptor<Texture> heavy_tail_up = new AssetDescriptor<Texture>("assets/textures/heavy_tail_up.png", Texture.class);
+    public static final AssetDescriptor<Texture> heavy_tail_down = new AssetDescriptor<Texture>("assets/textures/heavy_tail_down.png", Texture.class);
+    public static final AssetDescriptor<Texture> heavy_tail_left = new AssetDescriptor<Texture>("assets/textures/heavy_tail_left.png", Texture.class);
+    public static final AssetDescriptor<Texture> heavy_tail_right = new AssetDescriptor<Texture>("assets/textures/heavy_tail_right.png", Texture.class);
+
     public static final AssetDescriptor<Texture> medic = new AssetDescriptor<Texture>("assets/textures/medic.png", Texture.class);
 
     public static final AssetDescriptor<FreeTypeFontGenerator> title_font = new AssetDescriptor<FreeTypeFontGenerator>("assets/fonts/TF2Build.ttf", FreeTypeFontGenerator.class);

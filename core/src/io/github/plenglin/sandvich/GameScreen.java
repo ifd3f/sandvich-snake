@@ -36,7 +36,7 @@ public class GameScreen implements Screen, InputProcessor {
         gridCamera = new OrthographicCamera(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         gridCamera.setToOrtho(true);
         batch = new SpriteBatch();
-        snake = new SnakeCell(getRandomCell(), null);
+        snake = new SnakeCell(getRandomCell(), null, null, SnakeDirection.STOP);
         direction = SnakeDirection.STOP;
         nextDirection = direction;
         timeToNextUpdate = 0;
@@ -50,10 +50,10 @@ public class GameScreen implements Screen, InputProcessor {
         timeToNextUpdate -= delta;
         if (timeToNextUpdate <= 0) {
             if (lengthToGrow > 0) {
-                snake.move(direction.vec, true);
+                snake.move(direction, true);
                 lengthToGrow--;
             } else {
-                snake.move(direction.vec, false);
+                snake.move(direction, false);
             }
             if (snake.isEatingSelf()) {
                 Gdx.app.exit();
@@ -80,9 +80,9 @@ public class GameScreen implements Screen, InputProcessor {
         batch.setProjectionMatrix(gridCamera.combined);
         batch.begin();
         for (Food f : food) {
-            f.draw(batch, Constants.CELL_WIDTH, Constants.CELL_HEIGHT);
+            f.draw(batch);
         }
-        snake.draw(batch, Constants.CELL_WIDTH, Constants.CELL_HEIGHT);
+        snake.draw(batch);
         batch.end();
     }
 
