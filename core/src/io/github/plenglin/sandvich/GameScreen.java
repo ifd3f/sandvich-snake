@@ -12,8 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import io.github.plenglin.sandvich.food.Food;
-import io.github.plenglin.sandvich.food.Sandvich;
+import io.github.plenglin.sandvich.food.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +33,54 @@ public class GameScreen implements Screen, InputProcessor {
     int lengthToGrow;
     int score, money, health;
     BitmapFont statfont;
+    FoodSpawner spawner;
 
     @Override
     public void show() {
+        spawner = new FoodSpawner();
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Sandvich(position);
+            }
+        }, 10);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Cake(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Chocolate(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Medkit(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Money(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Steak(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Sticky(position);
+            }
+        }, 1);
+
         FreeTypeFontGenerator.FreeTypeFontParameter fontParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParams.size = 20;
         fontParams.color = new Color(Color.WHITE);
@@ -63,7 +107,15 @@ public class GameScreen implements Screen, InputProcessor {
     public void render(float delta) {
 
         // Update
+        List<Food> toRemove = new ArrayList<Food>();
         timeToNextUpdate -= delta;
+
+        for (Food f: food) {
+            f.update(delta);
+            if (f.hasDecayed()) {
+                toRemove.add(f);
+            }
+        }
         if (timeToNextUpdate <= 0) {
             if (lengthToGrow > 0) {
                 snake.move(direction, true);
@@ -77,23 +129,31 @@ public class GameScreen implements Screen, InputProcessor {
             if (snake.isOutOfBounds()) {
                 health = 0;
             }
-            Food toRemove = null;
             for (Food f : food) {
                 if (snake.getPosition().equals((f.getPosition()))) {
-                    toRemove = f;
+                    toRemove.add(f);
                     lengthToGrow += Constants.FOOD_GROW_LENGTH;
                     score += f.getPointValue();
                     health += f.getHealth();
                     money += f.getMoney();
+                    int healthCap;
+                    if (f.allowOverheal() || health > Constants.HEAVY_HEALTH) {
+                        healthCap = Constants.HEAVY_OVERHEAL;
+                    } else {
+                        healthCap = Constants.HEAVY_HEALTH;
+                    }
+                    health = health > healthCap ? healthCap : health;
                     break;
                 }
             }
-            food.remove(toRemove);
             timeToNextUpdate = Constants.UPDATE_SPEED;
             direction = nextDirection;
         }
+        for (Food f: toRemove) {
+            food.remove(f);
+        }
         if (food.size() < Constants.EXISTING_FOOD) {
-            food.add(new Sandvich(findNewFoodLocation()));
+            food.add(spawner.create(findNewFoodLocation()));
         }
         if (health <= 0) {
             gameOver();

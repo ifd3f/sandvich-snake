@@ -8,9 +8,11 @@ import io.github.plenglin.sandvich.IntVector;
 public abstract class Food {
 
     protected IntVector position;
+    protected float timeLeft;
 
     public Food(IntVector position) {
         this.position = position;
+        this.timeLeft = Constants.FOOD_DECAY_TIME;
     }
 
     public IntVector getPosition() {
@@ -27,6 +29,18 @@ public abstract class Food {
                 0, 0, t.getWidth(), t.getHeight(),
                 false, true
         );
+    }
+
+    public void update(float delta) {
+        timeLeft -= delta;
+    }
+
+    public boolean hasDecayed() {
+        return timeLeft <= 0;
+    }
+
+    public boolean allowOverheal() {
+        return false;
     }
 
     public abstract Texture getTexture();
