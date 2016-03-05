@@ -31,4 +31,10 @@ public abstract class Food {
 
     public abstract Texture getTexture();
 
+    public abstract int getPointValue();
+
+    public abstract int getHealth();
+
+    public abstract int getMoney();
+
 }

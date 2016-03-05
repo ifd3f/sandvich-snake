@@ -11,10 +11,10 @@ import java.util.Iterator;
  */
 public class SnakeCell implements Iterable<SnakeCell> {
 
+    boolean mouthOpen = false; // nice display thing
     private IntVector position;
     private SnakeDirection direction;
     private SnakeCell follower, following;
-    boolean mouthOpen = false; // nice display thing
 
     public SnakeCell(IntVector position, SnakeCell follower, SnakeCell following, SnakeDirection direction) {
         this.position = position;
@@ -27,7 +27,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
      * Move the snake.
      *
      * @param direction How to move it
-     * @param doAdd    Add a cell to the end?
+     * @param doAdd     Add a cell to the end?
      */
     public void move(SnakeDirection direction, boolean doAdd) {
         if (!isTail()) {
@@ -58,6 +58,10 @@ public class SnakeCell implements Iterable<SnakeCell> {
 
     public boolean isTail() {
         return follower == null;
+    }
+
+    public boolean isOutOfBounds() {
+        return (0 > position.x || position.x >= Constants.GRID_WIDTH) || (0 > position.y || position.y >= Constants.GRID_HEIGHT);
     }
 
     public SnakeCell getTail() {
@@ -121,7 +125,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
     }
 
     public Texture getTexture() {
-        if (isHead()){
+        if (isHead()) {
             return Main.assets.get(mouthOpen ? direction.open : direction.closed);
         }
         if (isTail()) {
@@ -131,7 +135,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
         IntVector b = follower.position;
         Pixmap pixmap = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
         pixmap.setColor(Constants.HEAVY_SKIN);
-        for (IntVector v: new IntVector[] {a, b}) {
+        for (IntVector v : new IntVector[]{a, b}) {
             switch (SnakeDirection.toDirection(position.sub(v))) {
                 case DOWN:
                     pixmap.fillRectangle(Constants.NECK_OFFSET, 0, Constants.HEAVY_NECK, Constants.NECK_LONG_LENGTH);

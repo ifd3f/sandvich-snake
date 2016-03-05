@@ -25,7 +25,7 @@ public enum SnakeDirection {
     }
 
     public static SnakeDirection toDirection(IntVector direction) {
-        for (SnakeDirection d: new SnakeDirection[] {STOP, UP, DOWN, LEFT, RIGHT}) {
+        for (SnakeDirection d : new SnakeDirection[]{STOP, UP, DOWN, LEFT, RIGHT}) {
             if (direction.equals(d.vec)) {
                 return d;
             }

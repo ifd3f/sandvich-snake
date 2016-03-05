@@ -9,6 +9,7 @@ import io.github.plenglin.sandvich.Main;
  *
  */
 public class Sandvich extends Food {
+
     public Sandvich(IntVector position) {
         super(position);
     }
@@ -18,5 +19,19 @@ public class Sandvich extends Food {
         return Main.assets.get(Assets.sandvich);
     }
 
+    @Override
+    public int getPointValue() {
+        return 100;
+    }
+
+    @Override
+    public int getHealth() {
+        return 0;
+    }
+
+    @Override
+    public int getMoney() {
+        return 0;
+    }
 
 }

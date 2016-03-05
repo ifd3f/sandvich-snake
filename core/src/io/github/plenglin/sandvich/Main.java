@@ -38,6 +38,8 @@ public class Main extends Game {
         assets.load(Assets.heavy_tail_left);
         assets.load(Assets.heavy_tail_right);
 
+        assets.load(Assets.heavy_portrait);
+
         assets.load(Assets.title_font);
         assets.load(Assets.header_font);
         assets.load(Assets.normal_font);
