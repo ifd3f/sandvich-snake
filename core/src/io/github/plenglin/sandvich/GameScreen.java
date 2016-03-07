@@ -139,9 +139,6 @@ public class GameScreen implements Screen, InputProcessor {
                 invulnType = InvulnType.DAMAGE;
                 invulnLeft = Constants.INVINCIBILITY_TIME;
             }
-            if (snake.isOutOfBounds()) {
-                health = 0;
-            }
             for (Food f : food) {
                 if (snake.getPosition().equals((f.getPosition()))) {
                     toRemove.add(f);
@@ -227,6 +224,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     public IntVector getRandomCell() {
         return new IntVector(Util.randint(0, Constants.GRID_WIDTH), Util.randint(0, Constants.GRID_HEIGHT));
+    }
+
+    public static IntVector getDimVector() {
+        return new IntVector(Constants.GRID_WIDTH, Constants.GRID_HEIGHT);
     }
 
     @Override

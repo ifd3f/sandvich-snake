@@ -1,5 +1,6 @@
 package io.github.plenglin.sandvich;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,7 +15,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
     boolean mouthOpen = false; // nice display thing
     private IntVector position;
     private SnakeDirection direction;
-    private SnakeCell follower, following;
+    private SnakeCell follower, following; // follower = behind, following = front
 
     public SnakeCell(IntVector position, SnakeCell follower, SnakeCell following, SnakeDirection direction) {
         this.position = position;
@@ -35,7 +36,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
         } else if (doAdd) {
             follower = new SnakeCell(position, null, this, this.direction);
         }
-        position = position.add(direction.vec);
+        position = position.add(direction.vec).add(GameScreen.getDimVector()).mod(GameScreen.getDimVector());
         this.direction = direction;
         mouthOpen = !mouthOpen;
     }
@@ -58,10 +59,6 @@ public class SnakeCell implements Iterable<SnakeCell> {
 
     public boolean isTail() {
         return follower == null;
-    }
-
-    public boolean isOutOfBounds() {
-        return (0 > position.x || position.x >= Constants.GRID_WIDTH) || (0 > position.y || position.y >= Constants.GRID_HEIGHT);
     }
 
     public SnakeCell getTail() {
@@ -124,36 +121,35 @@ public class SnakeCell implements Iterable<SnakeCell> {
         return position.equals(query) || (!isTail() && follower.occupiesPosition(query));
     }
 
+    Pixmap neckPixmap = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
+
     public Texture getTexture() {
         if (isHead()) {
             return Main.assets.get(mouthOpen ? direction.open : direction.closed);
         }
         if (isTail()) {
-            return Main.assets.get(SnakeDirection.toDirection(following.position.sub(position)).tail);
+            return Main.assets.get(following.direction.tail);
         }
-        IntVector a = following.position;
-        IntVector b = follower.position;
-        Pixmap pixmap = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Constants.HEAVY_SKIN);
-        for (IntVector v : new IntVector[]{a, b}) {
-            switch (SnakeDirection.toDirection(position.sub(v))) {
+        neckPixmap.setColor(Color.CLEAR);
+        neckPixmap.fill();
+        neckPixmap.setColor(Constants.HEAVY_SKIN);
+        for (SnakeDirection v : new SnakeDirection[]{following.direction.getOpposite(), direction}) {
+            switch (v) {
                 case DOWN:
-                    pixmap.fillRectangle(Constants.NECK_OFFSET, 0, Constants.HEAVY_NECK, Constants.NECK_LONG_LENGTH);
+                    neckPixmap.fillRectangle(Constants.NECK_OFFSET, 0, Constants.HEAVY_NECK, Constants.NECK_LONG_LENGTH);
                     break;
                 case UP:
-                    pixmap.fillRectangle(Constants.NECK_OFFSET, Constants.NECK_OFFSET, Constants.HEAVY_NECK, Constants.NECK_LONG_LENGTH);
+                    neckPixmap.fillRectangle(Constants.NECK_OFFSET, Constants.NECK_OFFSET, Constants.HEAVY_NECK, Constants.NECK_LONG_LENGTH);
                     break;
                 case RIGHT:
-                    pixmap.fillRectangle(0, Constants.NECK_OFFSET, Constants.NECK_LONG_LENGTH, Constants.HEAVY_NECK);
+                    neckPixmap.fillRectangle(0, Constants.NECK_OFFSET, Constants.NECK_LONG_LENGTH, Constants.HEAVY_NECK);
                     break;
                 case LEFT:
-                    pixmap.fillRectangle(Constants.NECK_OFFSET, Constants.NECK_OFFSET, Constants.NECK_LONG_LENGTH, Constants.HEAVY_NECK);
+                    neckPixmap.fillRectangle(Constants.NECK_OFFSET, Constants.NECK_OFFSET, Constants.NECK_LONG_LENGTH, Constants.HEAVY_NECK);
                     break;
             }
         }
-        Texture t = new Texture(pixmap);
-        pixmap.dispose();
-        return t;
+        return new Texture(neckPixmap);
     }
 
 }

@@ -19,6 +19,10 @@ public class IntVector {
         return new IntVector(this.x + other.x, this.y + other.y);
     }
 
+    public IntVector mod(IntVector other) {
+        return new IntVector(this.x % other.x, this.y % other.y);
+    }
+
     public IntVector sub(IntVector other) {
         return new IntVector(this.x - other.x, this.y - other.y);
     }
