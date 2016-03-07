@@ -29,11 +29,15 @@ public class GameScreen implements Screen, InputProcessor {
     OrthographicCamera gridCamera;
     SnakeCell snake;
     List<Food> food;
-    float timeToNextUpdate;
-    int lengthToGrow;
-    int score, money, health;
+    InvulnType invulnType;
+    float timeToNextUpdate, invulnLeft;
+    int lengthToGrow, score, money, health;
     BitmapFont statfont;
     FoodSpawner spawner;
+
+    enum InvulnType {
+        NONE, UBER, DAMAGE
+    }
 
     @Override
     public void show() {
@@ -43,7 +47,7 @@ public class GameScreen implements Screen, InputProcessor {
             public Food create(IntVector position) {
                 return new Sandvich(position);
             }
-        }, 10);
+        }, 20);
         spawner.addFood(new FoodDefinition() {
             @Override
             public Food create(IntVector position) {
@@ -97,6 +101,8 @@ public class GameScreen implements Screen, InputProcessor {
         direction = SnakeDirection.STOP;
         nextDirection = direction;
         timeToNextUpdate = 0;
+        invulnLeft = 0;
+        invulnType = InvulnType.NONE;
         lengthToGrow = 0;
         health = 300;
         money = 0;
@@ -109,6 +115,11 @@ public class GameScreen implements Screen, InputProcessor {
         // Update
         List<Food> toRemove = new ArrayList<Food>();
         timeToNextUpdate -= delta;
+        invulnLeft -= delta;
+
+        if (!isInvulnerable()) {
+            invulnType = InvulnType.NONE;
+        }
 
         for (Food f: food) {
             f.update(delta);
@@ -123,8 +134,10 @@ public class GameScreen implements Screen, InputProcessor {
             } else {
                 snake.move(direction, false);
             }
-            if (snake.isEatingSelf()) {
+            if (snake.isEatingSelf() && !isInvulnerable()) {
                 health -= 250;
+                invulnType = InvulnType.DAMAGE;
+                invulnLeft = Constants.INVINCIBILITY_TIME;
             }
             if (snake.isOutOfBounds()) {
                 health = 0;
@@ -175,7 +188,14 @@ public class GameScreen implements Screen, InputProcessor {
         for (Food f : food) {
             f.draw(batch);
         }
-        snake.draw(batch);
+
+        if (invulnType == InvulnType.UBER) {
+            batch.setColor(Color.RED);
+        }
+        if (!(invulnType == InvulnType.DAMAGE && Util.squareWave(System.currentTimeMillis(), 1000))) {
+            snake.draw(batch);
+        }
+        batch.setColor(Color.WHITE);
 
         batch.draw(Main.assets.get(Assets.heavy_portrait), 0, 0, 96, 96, 0, 0, 128, 128, false, true);
         statfont.draw(batch, "Score: " + score, 96, 16);
@@ -183,6 +203,10 @@ public class GameScreen implements Screen, InputProcessor {
         statfont.draw(batch, "$" + money, 96, 80);
 
         batch.end();
+    }
+
+    public boolean isInvulnerable() {
+        return invulnLeft > 0;
     }
 
     public void gameOver() {

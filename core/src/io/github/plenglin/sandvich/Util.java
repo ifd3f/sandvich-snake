@@ -9,4 +9,14 @@ public class Util {
         return (int) ((max - min) * Math.random() + min);
     }
 
+    /**
+     * Output a square wave.
+     * @param time the time
+     * @param period the period
+     * @return the value
+     */
+    public static boolean squareWave(long time, long period) {
+        return (time % (period / 2)) <= period / 4;
+    }
+
 }

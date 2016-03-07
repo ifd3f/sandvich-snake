@@ -22,6 +22,10 @@ public class Constants {
     public static final float UPDATE_SPEED = UPDATE_NORM;
 
     public static final float FOOD_DECAY_TIME = 10;
+    public static final float UBER_TIME = 8; // Medic ubers you
+    public static final float INVINCIBILITY_TIME = 3; // You bite yourself
+
+    public static final int MEDIC_COST = 1000;
 
     public static final int EXISTING_FOOD = 5;
     public static final int FOOD_GROW_LENGTH = 2;
