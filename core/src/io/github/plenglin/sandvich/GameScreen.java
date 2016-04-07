@@ -13,6 +13,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.plenglin.sandvich.food.*;
+import io.github.plenglin.sandvich.util.IntVector;
+import io.github.plenglin.sandvich.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;

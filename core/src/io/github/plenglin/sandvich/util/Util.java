@@ -1,4 +1,4 @@
-package io.github.plenglin.sandvich;
+package io.github.plenglin.sandvich.util;
 
 /**
  * Random helper functions

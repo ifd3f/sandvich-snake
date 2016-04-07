@@ -1,6 +1,6 @@
 package io.github.plenglin.sandvich.food;
 
-import io.github.plenglin.sandvich.IntVector;
+import io.github.plenglin.sandvich.util.IntVector;
 
 public interface FoodDefinition {
 

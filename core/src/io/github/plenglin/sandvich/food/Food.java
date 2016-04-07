@@ -3,7 +3,7 @@ package io.github.plenglin.sandvich.food;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.plenglin.sandvich.Constants;
-import io.github.plenglin.sandvich.IntVector;
+import io.github.plenglin.sandvich.util.IntVector;
 
 public abstract class Food {
 

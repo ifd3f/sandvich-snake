@@ -1,7 +1,7 @@
 package io.github.plenglin.sandvich.food;
 
-import io.github.plenglin.sandvich.IntVector;
-import io.github.plenglin.sandvich.Util;
+import io.github.plenglin.sandvich.util.IntVector;
+import io.github.plenglin.sandvich.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
