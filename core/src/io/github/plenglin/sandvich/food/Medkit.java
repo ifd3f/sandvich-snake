@@ -23,7 +23,7 @@ public class Medkit extends Food {
 
     @Override
     public int getHealth() {
-        return 50;
+        return 100;
     }
 
     @Override
