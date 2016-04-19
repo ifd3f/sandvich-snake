@@ -1,4 +1,4 @@
-package io.github.plenglin.sandvich;
+package io.github.plenglin.sandvich.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -6,13 +6,14 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import io.github.plenglin.sandvich.*;
+import io.github.plenglin.sandvich.assets.Assets;
+import io.github.plenglin.sandvich.assets.Font;
 import io.github.plenglin.sandvich.food.*;
+import io.github.plenglin.util.IntVector;
+import io.github.plenglin.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,26 +24,21 @@ import java.util.List;
 public class GameScreen implements Screen, InputProcessor {
 
     SnakeDirection direction, nextDirection;
-    SpriteBatch batch;
-    ShapeRenderer shape;
     Texture img;
-    OrthographicCamera gridCamera;
     SnakeCell snake;
     List<Food> food;
     InvulnType invulnType;
     float timeToNextUpdate, invulnLeft;
     int lengthToGrow, score, money, health;
-    BitmapFont statfont;
     FoodSpawner spawner;
 
     enum InvulnType {
         NONE, UBER, DAMAGE
     }
 
-    @Override
-    public void show() {
+    public void putFoodSpawnerData() {
         spawner = new FoodSpawner();
-        spawner.addFood(new FoodDefinition() {
+        spawner.addFood(new FoodDefinition() { // I want Java 7 compatibility
             @Override
             public Food create(IntVector position) {
                 return new Sandvich(position);
@@ -81,26 +77,24 @@ public class GameScreen implements Screen, InputProcessor {
         spawner.addFood(new FoodDefinition() {
             @Override
             public Food create(IntVector position) {
-                return new Sticky(position);
+                return new StickyBomb(position);
             }
         }, 1);
+    }
 
-        FreeTypeFontGenerator.FreeTypeFontParameter fontParams = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        fontParams.size = 20;
-        fontParams.color = new Color(Color.WHITE);
-        fontParams.flip = true;
-        statfont = Main.assets.get(Assets.normal_font).generateFont(fontParams);
-
+    @Override
+    public void show() {
         Gdx.input.setInputProcessor(this);
+
+        putFoodSpawnerData();
         food = new ArrayList<Food>();
-        gridCamera = new OrthographicCamera(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
-        gridCamera.setToOrtho(true);
-        batch = new SpriteBatch();
-        shape = new ShapeRenderer();
         snake = new SnakeCell(getRandomCell(), null, null, SnakeDirection.STOP);
+
         direction = SnakeDirection.STOP;
         nextDirection = direction;
+
         timeToNextUpdate = 0;
+
         invulnLeft = 0;
         invulnType = InvulnType.NONE;
         lengthToGrow = 0;
@@ -109,39 +103,52 @@ public class GameScreen implements Screen, InputProcessor {
         score = 0;
     }
 
+    public void updateTimers(float delta) {
+        timeToNextUpdate -= delta;
+        invulnLeft -= delta;
+    }
+
     @Override
     public void render(float delta) {
 
-        // Update
-        List<Food> toRemove = new ArrayList<Food>();
-        timeToNextUpdate -= delta;
-        invulnLeft -= delta;
+        /** Update **/
+        updateTimers(delta);
+        List<Food> foodToRemove = new ArrayList<Food>();
 
         if (!isInvulnerable()) {
             invulnType = InvulnType.NONE;
         }
 
+        // Remove decaying food
         for (Food f: food) {
             f.update(delta);
             if (f.hasDecayed()) {
-                toRemove.add(f);
+                foodToRemove.add(f);
             }
         }
+
+        // Move the snake on periodic updates
         if (timeToNextUpdate <= 0) {
+
+            // Grow the snake, if necessary
             if (lengthToGrow > 0) {
                 snake.move(direction, true);
                 lengthToGrow--;
             } else {
                 snake.move(direction, false);
             }
+
+            // Check if the snake is eating itself
             if (snake.isEatingSelf() && !isInvulnerable()) {
                 health -= 250;
                 invulnType = InvulnType.DAMAGE;
                 invulnLeft = Constants.INVINCIBILITY_TIME;
             }
+
+            // Check if the snake is eating any food
             for (Food f : food) {
                 if (snake.getPosition().equals((f.getPosition()))) {
-                    toRemove.add(f);
+                    foodToRemove.add(f);
                     lengthToGrow += Constants.FOOD_GROW_LENGTH;
                     score += f.getPointValue();
                     health += f.getHealth();
@@ -156,10 +163,12 @@ public class GameScreen implements Screen, InputProcessor {
                     break;
                 }
             }
+
             timeToNextUpdate = Constants.UPDATE_SPEED;
             direction = nextDirection;
+
         }
-        for (Food f: toRemove) {
+        for (Food f: foodToRemove) {
             food.remove(f);
         }
         if (food.size() < Constants.EXISTING_FOOD) {
@@ -169,37 +178,45 @@ public class GameScreen implements Screen, InputProcessor {
             gameOver();
         }
 
-        // Render
+        /** Render **/
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.setProjectionMatrix(gridCamera.combined);
-        shape.setProjectionMatrix(gridCamera.combined);
+        Main.batch.setProjectionMatrix(Main.camera.combined);
+        Main.shape.setProjectionMatrix(Main.camera.combined);
 
-        shape.begin(ShapeRenderer.ShapeType.Line);
-        shape.setColor(Color.BLUE);
-        shape.rect(Constants.GRID_OFFSET_X, Constants.GRID_OFFSET_Y, Constants.GRID_DISPLAY_WIDTH, Constants.GRID_DISPLAY_HEIGHT);
-        shape.end();
+        // Draw border
+        Main.shape.begin(ShapeRenderer.ShapeType.Line);
+        Main.shape.setColor(Color.BLUE);
+        Main.shape.rect(Constants.GRID_OFFSET_X, Constants.GRID_OFFSET_Y, Constants.GRID_DISPLAY_WIDTH, Constants.GRID_DISPLAY_HEIGHT);
+        Main.shape.end();
 
-        batch.begin();
+        Main.batch.begin();
+        drawObjects();
+        drawStats();
+        Main.batch.end();
+    }
+
+    public void drawObjects() {
         for (Food f : food) {
-            f.draw(batch);
+            f.draw(Main.batch);
         }
 
         if (invulnType == InvulnType.UBER) {
-            batch.setColor(Color.RED);
+            Main.batch.setColor(Color.RED);
         }
         if (!(invulnType == InvulnType.DAMAGE && Util.squareWave(System.currentTimeMillis(), 1000))) {
-            snake.draw(batch);
+            snake.draw(Main.batch);
         }
-        batch.setColor(Color.WHITE);
+    }
 
-        batch.draw(Main.assets.get(Assets.heavy_portrait), 0, 0, 96, 96, 0, 0, 128, 128, false, true);
-        statfont.draw(batch, "Score: " + score, 96, 16);
-        statfont.draw(batch, "Health: " + health, 96, 48);
-        statfont.draw(batch, "$" + money, 96, 80);
+    public void drawStats() {
+        Main.batch.setColor(Color.WHITE);
 
-        batch.end();
+        Main.batch.draw(Main.assets.get(Assets.heavy_portrait), 0, 0, 96, 96, 0, 0, 128, 128, false, true);
+        Font.stats.draw(Main.batch, "Score: " + score, 96, 16);
+        Font.stats.draw(Main.batch, "Health: " + health, 96, 48);
+        Font.stats.draw(Main.batch, "$" + money, 96, 80);
     }
 
     public boolean isInvulnerable() {

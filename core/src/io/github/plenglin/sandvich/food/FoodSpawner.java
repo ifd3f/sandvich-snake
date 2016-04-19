@@ -1,12 +1,15 @@
 package io.github.plenglin.sandvich.food;
 
-import io.github.plenglin.sandvich.IntVector;
-import io.github.plenglin.sandvich.Util;
+import io.github.plenglin.util.IntVector;
+import io.github.plenglin.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * A weighted random food generator.
+ */
 public class FoodSpawner {
 
     private Map<FoodDefinition, Integer> weights;

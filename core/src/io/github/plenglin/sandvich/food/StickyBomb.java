@@ -1,13 +1,16 @@
 package io.github.plenglin.sandvich.food;
 
 import com.badlogic.gdx.graphics.Texture;
-import io.github.plenglin.sandvich.Assets;
-import io.github.plenglin.sandvich.IntVector;
+import io.github.plenglin.sandvich.assets.Assets;
+import io.github.plenglin.util.IntVector;
 import io.github.plenglin.sandvich.Main;
 
-public class Sticky extends Food {
+/**
+ * It's like steak, but more high steaks.
+ */
+public class StickyBomb extends Food {
 
-    public Sticky(IntVector position) {
+    public StickyBomb(IntVector position) {
         super(position);
     }
 

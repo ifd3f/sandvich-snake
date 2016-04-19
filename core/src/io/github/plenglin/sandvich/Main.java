@@ -3,12 +3,21 @@ package io.github.plenglin.sandvich;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import io.github.plenglin.sandvich.assets.Assets;
+import io.github.plenglin.sandvich.assets.Font;
+import io.github.plenglin.sandvich.screen.GameScreen;
 
 public class Main extends Game {
 
     public static AssetManager assets;
+    public static SpriteBatch batch;
+    public static ShapeRenderer shape;
+    public static OrthographicCamera camera;
 
     public static void loadAssets() {
 
@@ -50,7 +59,12 @@ public class Main extends Game {
     @Override
     public void create() {
         assets = new AssetManager();
+        batch = new SpriteBatch();
+        shape = new ShapeRenderer();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(true, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         loadAssets();
+        Font.generateFonts();
         setScreen(new GameScreen());
     }
 

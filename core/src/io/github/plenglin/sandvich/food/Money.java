@@ -1,10 +1,13 @@
 package io.github.plenglin.sandvich.food;
 
 import com.badlogic.gdx.graphics.Texture;
-import io.github.plenglin.sandvich.Assets;
-import io.github.plenglin.sandvich.IntVector;
+import io.github.plenglin.sandvich.assets.Assets;
+import io.github.plenglin.util.IntVector;
 import io.github.plenglin.sandvich.Main;
 
+/**
+ * Medic vants manies for the uber because he's not credit to team.
+ */
 public class Money extends Food {
 
     public Money(IntVector position) {

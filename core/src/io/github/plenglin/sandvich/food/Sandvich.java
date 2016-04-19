@@ -1,12 +1,12 @@
 package io.github.plenglin.sandvich.food;
 
 import com.badlogic.gdx.graphics.Texture;
-import io.github.plenglin.sandvich.Assets;
-import io.github.plenglin.sandvich.IntVector;
+import io.github.plenglin.sandvich.assets.Assets;
+import io.github.plenglin.util.IntVector;
 import io.github.plenglin.sandvich.Main;
 
 /**
- *
+ * The OG - Original Grub
  */
 public class Sandvich extends Food {
 
