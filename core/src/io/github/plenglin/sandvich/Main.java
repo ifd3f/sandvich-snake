@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import io.github.plenglin.sandvich.assets.Assets;
 import io.github.plenglin.sandvich.assets.Font;
+import io.github.plenglin.sandvich.food.*;
 import io.github.plenglin.sandvich.screen.GameScreen;
+import io.github.plenglin.util.IntVector;
 
 public class Main extends Game {
 
@@ -18,6 +20,53 @@ public class Main extends Game {
     public static SpriteBatch batch;
     public static ShapeRenderer shape;
     public static OrthographicCamera camera;
+    public static FoodSpawner spawner;
+
+    public static void putFoodSpawnerData() {
+        spawner = new FoodSpawner();
+        spawner.addFood(new FoodDefinition() { // I want Java 7 compatibility
+            @Override
+            public Food create(IntVector position) {
+                return new Sandvich(position);
+            }
+        }, 20);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Cake(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Chocolate(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Medkit(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Money(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new Steak(position);
+            }
+        }, 1);
+        spawner.addFood(new FoodDefinition() {
+            @Override
+            public Food create(IntVector position) {
+                return new StickyBomb(position);
+            }
+        }, 1);
+    }
 
     public static void loadAssets() {
 
@@ -65,6 +114,7 @@ public class Main extends Game {
         camera.setToOrtho(true, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         loadAssets();
         Font.generateFonts();
+        putFoodSpawnerData();
         setScreen(new GameScreen());
     }
 
@@ -76,7 +126,10 @@ public class Main extends Game {
     @Override
     public void dispose() {
         super.dispose();
+        Font.dispose();
         assets.dispose();
+        batch.dispose();
+        shape.dispose();
     }
 
 }

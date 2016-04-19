@@ -6,6 +6,13 @@ import com.badlogic.gdx.Screen;
  *
  */
 public class LoseScreen implements Screen {
+
+    int points;
+
+    public LoseScreen(int points) {
+        this.points = points;
+    }
+
     @Override
     public void show() {
 

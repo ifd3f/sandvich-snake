@@ -30,63 +30,16 @@ public class GameScreen implements Screen, InputProcessor {
     InvulnType invulnType;
     float timeToNextUpdate, invulnLeft;
     int lengthToGrow, score, money, health;
-    FoodSpawner spawner;
+    boolean gameOver = false;
 
     enum InvulnType {
         NONE, UBER, DAMAGE
-    }
-
-    public void putFoodSpawnerData() {
-        spawner = new FoodSpawner();
-        spawner.addFood(new FoodDefinition() { // I want Java 7 compatibility
-            @Override
-            public Food create(IntVector position) {
-                return new Sandvich(position);
-            }
-        }, 20);
-        spawner.addFood(new FoodDefinition() {
-            @Override
-            public Food create(IntVector position) {
-                return new Cake(position);
-            }
-        }, 1);
-        spawner.addFood(new FoodDefinition() {
-            @Override
-            public Food create(IntVector position) {
-                return new Chocolate(position);
-            }
-        }, 1);
-        spawner.addFood(new FoodDefinition() {
-            @Override
-            public Food create(IntVector position) {
-                return new Medkit(position);
-            }
-        }, 1);
-        spawner.addFood(new FoodDefinition() {
-            @Override
-            public Food create(IntVector position) {
-                return new Money(position);
-            }
-        }, 1);
-        spawner.addFood(new FoodDefinition() {
-            @Override
-            public Food create(IntVector position) {
-                return new Steak(position);
-            }
-        }, 1);
-        spawner.addFood(new FoodDefinition() {
-            @Override
-            public Food create(IntVector position) {
-                return new StickyBomb(position);
-            }
-        }, 1);
     }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this);
 
-        putFoodSpawnerData();
         food = new ArrayList<Food>();
         snake = new SnakeCell(getRandomCell(), null, null, SnakeDirection.STOP);
 
@@ -113,7 +66,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         /** Update **/
         updateTimers(delta);
-        List<Food> foodToRemove = new ArrayList<Food>();
+        List<Food> foodToRemove = new ArrayList<>();
 
         if (!isInvulnerable()) {
             invulnType = InvulnType.NONE;
@@ -172,7 +125,7 @@ public class GameScreen implements Screen, InputProcessor {
             food.remove(f);
         }
         if (food.size() < Constants.EXISTING_FOOD) {
-            food.add(spawner.create(findNewFoodLocation()));
+            food.add(Main.spawner.create(findNewFoodLocation()));
         }
         if (health <= 0) {
             gameOver();

@@ -20,4 +20,8 @@ public class Font {
         stats = Main.assets.get(Assets.normal_font).generateFont(params);
     }
 
+    public static void dispose() {
+        stats.dispose();
+    }
+
 }
