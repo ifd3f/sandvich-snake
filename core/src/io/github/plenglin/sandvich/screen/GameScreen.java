@@ -16,6 +16,7 @@ import io.github.plenglin.util.IntVector;
 import io.github.plenglin.util.Util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -61,6 +62,52 @@ public class GameScreen implements Screen, InputProcessor {
         invulnLeft -= delta;
     }
 
+    public void periodicUpdate(float delta) {
+        // Grow the snake, if necessary
+        if (lengthToGrow > 0) {
+            snake.move(direction, true);
+            lengthToGrow--;
+        } else {
+            snake.move(direction, false);
+        }
+
+        // Check if the snake is eating itself
+        if (snake.isEatingSelf() && !isInvulnerable()) {
+            health -= 250;
+            invulnType = InvulnType.DAMAGE;
+            invulnLeft = Constants.INVINCIBILITY_TIME;
+        }
+
+        // Update food, and check if the snake is eating any food
+        System.out.println(food.size());
+        Iterator<Food> foodIterator = food.iterator();
+        while (foodIterator.hasNext()) {
+            Food f = foodIterator.next();
+            f.update(delta);
+            if (snake.getPosition().equals((f.getPosition()))) {
+                foodIterator.remove();
+                lengthToGrow += Constants.FOOD_GROW_LENGTH;
+                score += f.getPointValue();
+                health += f.getHealth();
+                money += f.getMoney();
+                int healthCap;
+                if (f.allowOverheal() || health > Constants.HEAVY_HEALTH) {
+                    healthCap = Constants.HEAVY_OVERHEAL;
+                } else {
+                    healthCap = Constants.HEAVY_HEALTH;
+                }
+                health = health > healthCap ? healthCap : health;
+                break;
+            }
+            if (f.hasDecayed()) {
+                foodIterator.remove();
+            }
+        }
+
+        timeToNextUpdate = Constants.UPDATE_SPEED;
+        direction = nextDirection;
+    }
+
     @Override
     public void render(float delta) {
 
@@ -72,54 +119,9 @@ public class GameScreen implements Screen, InputProcessor {
             invulnType = InvulnType.NONE;
         }
 
-        // Remove decaying food
-        for (Food f: food) {
-            f.update(delta);
-            if (f.hasDecayed()) {
-                foodToRemove.add(f);
-            }
-        }
-
         // Move the snake on periodic updates
         if (timeToNextUpdate <= 0) {
-
-            // Grow the snake, if necessary
-            if (lengthToGrow > 0) {
-                snake.move(direction, true);
-                lengthToGrow--;
-            } else {
-                snake.move(direction, false);
-            }
-
-            // Check if the snake is eating itself
-            if (snake.isEatingSelf() && !isInvulnerable()) {
-                health -= 250;
-                invulnType = InvulnType.DAMAGE;
-                invulnLeft = Constants.INVINCIBILITY_TIME;
-            }
-
-            // Check if the snake is eating any food
-            for (Food f : food) {
-                if (snake.getPosition().equals((f.getPosition()))) {
-                    foodToRemove.add(f);
-                    lengthToGrow += Constants.FOOD_GROW_LENGTH;
-                    score += f.getPointValue();
-                    health += f.getHealth();
-                    money += f.getMoney();
-                    int healthCap;
-                    if (f.allowOverheal() || health > Constants.HEAVY_HEALTH) {
-                        healthCap = Constants.HEAVY_OVERHEAL;
-                    } else {
-                        healthCap = Constants.HEAVY_HEALTH;
-                    }
-                    health = health > healthCap ? healthCap : health;
-                    break;
-                }
-            }
-
-            timeToNextUpdate = Constants.UPDATE_SPEED;
-            direction = nextDirection;
-
+            periodicUpdate(delta);
         }
         for (Food f: foodToRemove) {
             food.remove(f);
