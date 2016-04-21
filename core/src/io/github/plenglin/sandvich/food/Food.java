@@ -10,10 +10,10 @@ import io.github.plenglin.util.IntVector;
  */
 public abstract class Food {
 
-    protected IntVector position;
-    protected float timeLeft;
+    private IntVector position;
+    private float timeLeft;
 
-    public Food(IntVector position) {
+    Food(IntVector position) {
         this.position = position;
         this.timeLeft = Constants.FOOD_DECAY_TIME;
     }
@@ -46,7 +46,7 @@ public abstract class Food {
         return false;
     }
 
-    public abstract Texture getTexture();
+    protected abstract Texture getTexture();
 
     public abstract int getPointValue();
 

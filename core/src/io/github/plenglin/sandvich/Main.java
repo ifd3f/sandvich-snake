@@ -22,7 +22,7 @@ public class Main extends Game {
     public static OrthographicCamera camera;
     public static FoodSpawner spawner;
 
-    public static void putFoodSpawnerData() {
+    private static void putFoodSpawnerData() {
         spawner = new FoodSpawner();
         spawner.addFood(new FoodDefinition() { // I want Java 7 compatibility
             @Override
@@ -68,7 +68,7 @@ public class Main extends Game {
         }, 1);
     }
 
-    public static void loadAssets() {
+    private static void loadAssets() {
 
         assets.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(new InternalFileHandleResolver()));
 

@@ -11,7 +11,8 @@ public class Util {
 
     /**
      * Output a square wave.
-     * @param time the time
+     *
+     * @param time   the time
      * @param period the period
      * @return the value
      */

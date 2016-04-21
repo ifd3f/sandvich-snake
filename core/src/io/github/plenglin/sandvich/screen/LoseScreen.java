@@ -5,9 +5,9 @@ import com.badlogic.gdx.Screen;
 /**
  *
  */
-public class LoseScreen implements Screen {
+class LoseScreen implements Screen {
 
-    int points;
+    private final int points;
 
     public LoseScreen(int points) {
         this.points = points;

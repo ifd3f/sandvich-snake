@@ -12,20 +12,20 @@ import java.util.TreeMap;
  */
 public class FoodSpawner {
 
-    private Map<FoodDefinition, Integer> weights;
+    private final Map<FoodDefinition, Integer> weights;
 
     public FoodSpawner() {
-        weights = new HashMap<FoodDefinition, Integer>();
+        weights = new HashMap<>();
     }
 
     public void addFood(FoodDefinition foodClass, int weight) {
         weights.put(foodClass, weight);
     }
 
-    public TreeMap<Integer, FoodDefinition> getMaximums() {
+    private TreeMap<Integer, FoodDefinition> getMaximums() {
         int n = 0;
-        TreeMap<Integer, FoodDefinition> maximums = new TreeMap<Integer, FoodDefinition>();
-        for (FoodDefinition foodClass: weights.keySet()) {
+        TreeMap<Integer, FoodDefinition> maximums = new TreeMap<>();
+        for (FoodDefinition foodClass : weights.keySet()) {
             int weight = weights.get(foodClass);
             n += weight;
             maximums.put(n, foodClass);

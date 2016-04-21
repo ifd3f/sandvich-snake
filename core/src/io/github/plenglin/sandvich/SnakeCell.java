@@ -14,7 +14,8 @@ import java.util.Iterator;
  */
 public class SnakeCell implements Iterable<SnakeCell> {
 
-    boolean mouthOpen = false; // nice display thing
+    private final Pixmap neckPixmap = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
+    private boolean mouthOpen = false; // nice display thing
     private IntVector position;
     private SnakeDirection direction;
     private SnakeCell follower, following; // follower = behind, following = front
@@ -59,11 +60,11 @@ public class SnakeCell implements Iterable<SnakeCell> {
         return position;
     }
 
-    public boolean isTail() {
+    private boolean isTail() {
         return follower == null;
     }
 
-    public SnakeCell getTail() {
+    private SnakeCell getTail() {
         return isTail() ? this : follower.getTail();
     }
 
@@ -71,11 +72,11 @@ public class SnakeCell implements Iterable<SnakeCell> {
         return follower;
     }
 
-    public boolean isHead() {
+    private boolean isHead() {
         return following == null;
     }
 
-    public SnakeCell getHead() {
+    private SnakeCell getHead() {
         return isHead() ? this : follower.getHead();
     }
 
@@ -118,6 +119,11 @@ public class SnakeCell implements Iterable<SnakeCell> {
                 current = current.follower;
                 return current;
             }
+
+            @Override
+            public void remove() {
+
+            }
         };
     }
 
@@ -125,9 +131,7 @@ public class SnakeCell implements Iterable<SnakeCell> {
         return position.equals(query) || (!isTail() && follower.occupiesPosition(query));
     }
 
-    Pixmap neckPixmap = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
-
-    public Texture getTexture() {
+    private Texture getTexture() {
         if (isHead()) {
             return new Texture(Main.assets.get(mouthOpen ? direction.open : direction.closed).getTextureData());
         }

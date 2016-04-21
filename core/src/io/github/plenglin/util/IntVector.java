@@ -4,14 +4,15 @@ import com.badlogic.gdx.math.Vector2;
 
 public class IntVector {
 
-    public int x, y;
+    public final int x;
+    public final int y;
 
     public IntVector(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public IntVector(IntVector vec) {
+    private IntVector(IntVector vec) {
         this(vec.x, vec.y);
     }
 

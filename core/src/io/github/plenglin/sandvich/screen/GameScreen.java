@@ -8,10 +8,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import io.github.plenglin.sandvich.*;
+import io.github.plenglin.sandvich.Constants;
+import io.github.plenglin.sandvich.Main;
+import io.github.plenglin.sandvich.SnakeCell;
+import io.github.plenglin.sandvich.SnakeDirection;
 import io.github.plenglin.sandvich.assets.Assets;
 import io.github.plenglin.sandvich.assets.Font;
-import io.github.plenglin.sandvich.food.*;
+import io.github.plenglin.sandvich.food.Food;
 import io.github.plenglin.util.IntVector;
 import io.github.plenglin.util.Util;
 
@@ -24,24 +27,29 @@ import java.util.List;
  */
 public class GameScreen implements Screen, InputProcessor {
 
-    SnakeDirection direction, nextDirection;
     Texture img;
-    SnakeCell snake;
-    List<Food> food;
-    InvulnType invulnType;
-    float timeToNextUpdate, invulnLeft;
-    int lengthToGrow, score, money, health;
     boolean gameOver = false;
+    private SnakeDirection direction;
+    private SnakeDirection nextDirection;
+    private SnakeCell snake;
+    private List<Food> food;
+    private InvulnType invulnType;
+    private float timeToNextUpdate;
+    private float invulnLeft;
+    private int lengthToGrow;
+    private int score;
+    private int money;
+    private int health;
 
-    enum InvulnType {
-        NONE, UBER, DAMAGE
+    public static IntVector getDimVector() {
+        return new IntVector(Constants.GRID_WIDTH, Constants.GRID_HEIGHT);
     }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this);
 
-        food = new ArrayList<Food>();
+        food = new ArrayList<>();
         snake = new SnakeCell(getRandomCell(), null, null, SnakeDirection.STOP);
 
         direction = SnakeDirection.STOP;
@@ -57,12 +65,12 @@ public class GameScreen implements Screen, InputProcessor {
         score = 0;
     }
 
-    public void updateTimers(float delta) {
+    private void updateTimers(float delta) {
         timeToNextUpdate -= delta;
         invulnLeft -= delta;
     }
 
-    public void periodicUpdate(float delta) {
+    private void periodicUpdate(float delta) {
         // Grow the snake, if necessary
         if (lengthToGrow > 0) {
             snake.move(direction, true);
@@ -113,7 +121,6 @@ public class GameScreen implements Screen, InputProcessor {
 
         /** Update **/
         updateTimers(delta);
-        List<Food> foodToRemove = new ArrayList<>();
 
         if (!isInvulnerable()) {
             invulnType = InvulnType.NONE;
@@ -122,9 +129,6 @@ public class GameScreen implements Screen, InputProcessor {
         // Move the snake on periodic updates
         if (timeToNextUpdate <= 0) {
             periodicUpdate(delta);
-        }
-        for (Food f: foodToRemove) {
-            food.remove(f);
         }
         if (food.size() < Constants.EXISTING_FOOD) {
             food.add(Main.spawner.create(findNewFoodLocation()));
@@ -152,7 +156,7 @@ public class GameScreen implements Screen, InputProcessor {
         Main.batch.end();
     }
 
-    public void drawObjects() {
+    private void drawObjects() {
         for (Food f : food) {
             f.draw(Main.batch);
         }
@@ -165,7 +169,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
     }
 
-    public void drawStats() {
+    private void drawStats() {
         Main.batch.setColor(Color.WHITE);
 
         Main.batch.draw(Main.assets.get(Assets.heavy_portrait), 0, 0, 96, 96, 0, 0, 128, 128, false, true);
@@ -174,11 +178,11 @@ public class GameScreen implements Screen, InputProcessor {
         Font.stats.draw(Main.batch, "$" + money, 96, 80);
     }
 
-    public boolean isInvulnerable() {
+    private boolean isInvulnerable() {
         return invulnLeft > 0;
     }
 
-    public void gameOver() {
+    private void gameOver() {
 
     }
 
@@ -186,7 +190,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     }
 
-    public IntVector findNewFoodLocation() {
+    private IntVector findNewFoodLocation() {
         IntVector pos = getRandomCell();
         while (snake.occupiesPosition(pos)) {
             pos = getRandomCell();
@@ -194,12 +198,8 @@ public class GameScreen implements Screen, InputProcessor {
         return pos;
     }
 
-    public IntVector getRandomCell() {
+    private IntVector getRandomCell() {
         return new IntVector(Util.randint(0, Constants.GRID_WIDTH), Util.randint(0, Constants.GRID_HEIGHT));
-    }
-
-    public static IntVector getDimVector() {
-        return new IntVector(Constants.GRID_WIDTH, Constants.GRID_HEIGHT);
     }
 
     @Override
@@ -291,5 +291,9 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    enum InvulnType {
+        NONE, UBER, DAMAGE
     }
 }
