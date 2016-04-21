@@ -1,4 +1,4 @@
-package io.github.plenglin.sandvich.util;
+package io.github.plenglin.util;
 
 import com.badlogic.gdx.math.Vector2;
 

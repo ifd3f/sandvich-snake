@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import io.github.plenglin.sandvich.util.IntVector;
+import io.github.plenglin.sandvich.screen.GameScreen;
+import io.github.plenglin.util.IntVector;
 
 import java.util.Iterator;
 
@@ -92,9 +93,11 @@ public class SnakeCell implements Iterable<SnakeCell> {
                 0, 0, t.getWidth(), t.getHeight(),
                 false, true
         );
+        batch.flush();
         if (!isTail()) {
             follower.draw(batch);
         }
+        t.dispose();
     }
 
     /**
@@ -126,10 +129,10 @@ public class SnakeCell implements Iterable<SnakeCell> {
 
     public Texture getTexture() {
         if (isHead()) {
-            return Main.assets.get(mouthOpen ? direction.open : direction.closed);
+            return new Texture(Main.assets.get(mouthOpen ? direction.open : direction.closed).getTextureData());
         }
         if (isTail()) {
-            return Main.assets.get(following.direction.tail);
+            return new Texture(Main.assets.get(following.direction.tail).getTextureData());
         }
         neckPixmap.setColor(Color.CLEAR);
         neckPixmap.fill();

@@ -2,7 +2,8 @@ package io.github.plenglin.sandvich;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.graphics.Texture;
-import io.github.plenglin.sandvich.util.IntVector;
+import io.github.plenglin.sandvich.assets.Assets;
+import io.github.plenglin.util.IntVector;
 
 /**
  * The direction the snake can move in

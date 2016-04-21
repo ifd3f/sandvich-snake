@@ -1,4 +1,4 @@
-package io.github.plenglin.sandvich;
+package io.github.plenglin.sandvich.assets;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.graphics.Texture;

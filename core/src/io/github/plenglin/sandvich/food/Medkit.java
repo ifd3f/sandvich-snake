@@ -1,10 +1,13 @@
 package io.github.plenglin.sandvich.food;
 
 import com.badlogic.gdx.graphics.Texture;
-import io.github.plenglin.sandvich.Assets;
-import io.github.plenglin.sandvich.util.IntVector;
+import io.github.plenglin.sandvich.assets.Assets;
+import io.github.plenglin.util.IntVector;
 import io.github.plenglin.sandvich.Main;
 
+/**
+ * You don't even need a medical license to use this!
+ */
 public class Medkit extends Food {
 
     public Medkit(IntVector position) {
@@ -23,7 +26,7 @@ public class Medkit extends Food {
 
     @Override
     public int getHealth() {
-        return 50;
+        return 100;
     }
 
     @Override
